@@ -6,7 +6,7 @@ const siteMetadata = {
   description: 'A blog created with Next.js and Tailwind.css',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://daklod2k3.github.io/love-tech-blog/',
+  siteUrl: 'https://daklod2k3.github.io/love-tech-blog',
   siteRepo: 'https://github.com/daklod2k3/love-tech-blog',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
@@ -81,7 +81,7 @@ const siteMetadata = {
   search: {
     provider: 'kbar', // kbar or algolia
     kbarConfig: {
-      searchDocumentsPath: 'search.json', // path to load documents to search
+      searchDocumentsPath: `${process.env.BASE_PATH || ''}/search.json`, // path to load documents to search
     },
     // provider: 'algolia',
     // algoliaConfig: {
