@@ -27,6 +27,10 @@ module.exports = {
       colors: {
         primary: colors.sky,
         gray: colors.gray,
+        background: {
+          white: colors.white,
+          dark: 'rgb(9 9 11)',
+        },
       },
       typography: ({ theme }) => ({
         DEFAULT: {
