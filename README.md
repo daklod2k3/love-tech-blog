@@ -2,7 +2,7 @@
 
 # Love Tech Blog
 
-LoveTechBlog is a blog where I and my friends share everything about technology
+[LoveTechBlog](https://daklod2k3.github.io/love-tech-blog/) is a blog where I and my friends share everything about technology
 
 This is a blog using [Tailwind Nextjs Starter Blog](https://github.com/timlrx/tailwind-nextjs-starter-blog?tab=readme-ov-file). This version is based on Next App directory with [React Server Component](https://nextjs.org/docs/getting-started/react-essentials#server-components) and uses [Contentlayer](https://www.contentlayer.dev/) to manage markdown content.
 
