@@ -1,9 +1,9 @@
 'use client'
 
+import headerNavLinks from '@/data/headerNavLinks'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import Link from './Link'
-import headerNavLinks from '@/data/headerNavLinks'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
@@ -37,7 +37,7 @@ const MobileNav = () => {
         </svg>
       </button>
       <Transition appear show={navShow} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onToggleNav}>
+        <Dialog as="div" className="relative z-50" onClose={onToggleNav}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"

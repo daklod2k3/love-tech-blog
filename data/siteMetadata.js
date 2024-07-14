@@ -9,7 +9,7 @@ const siteMetadata = {
   siteUrl: 'https://daklod2k3.github.io/love-tech-blog',
   siteRepo: 'https://github.com/daklod2k3/love-tech-blog',
   siteLogo: '/static/images/logo.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/meta-image.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'trandacloc123@gmail.com',
   github: 'https://github.com/daklod2k3',

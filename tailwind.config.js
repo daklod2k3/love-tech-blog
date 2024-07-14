@@ -28,8 +28,8 @@ module.exports = {
         primary: colors.sky,
         gray: colors.gray,
         background: {
-          white: colors.white,
-          dark: 'rgb(9 9 11)',
+          white: '#f5f5f5',
+          dark: '#1d1e20',
         },
       },
       typography: ({ theme }) => ({
