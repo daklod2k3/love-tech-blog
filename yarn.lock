@@ -3199,6 +3199,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dom-view-transitions@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/dom-view-transitions@npm:1.0.4"
+  checksum: cde875ef0349674eb88e757492dc69364fd98fe7d91cdb3a01e655b6b943752266b57297ed229b7b8f38e839fa12a75587ea11e284049df8509a660c04c4b3b4
+  languageName: node
+  linkType: hard
+
 "@types/estree-jsx@npm:^1.0.0":
   version: 1.0.5
   resolution: "@types/estree-jsx@npm:1.0.5"
@@ -11020,6 +11027,7 @@ __metadata:
     "@svgr/webpack": ^8.0.1
     "@tailwindcss/forms": ^0.5.7
     "@tailwindcss/typography": ^0.5.12
+    "@types/dom-view-transitions": ^1.0.4
     "@types/mdx": ^2.0.12
     "@types/react": ^18.2.73
     "@typescript-eslint/eslint-plugin": ^6.1.0
