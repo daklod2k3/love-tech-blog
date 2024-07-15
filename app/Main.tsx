@@ -15,7 +15,6 @@ export default function Home({ posts }) {
             Latest
           </h1> */}
           <h1 className="text-2xl font-bold">Welcome to LoveTechBlog, </h1>
-          <h1>Where we share the latest tech news and updates</h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
             {siteMetadata.description}
           </p>

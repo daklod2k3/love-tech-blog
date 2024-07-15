@@ -3,7 +3,7 @@ const siteMetadata = {
   title: 'Love Tech Blog',
   author: 'Dak Lod',
   headerTitle: 'LoveTechBlog',
-  description: 'A blog created with Next.js and Tailwind.css',
+  description: 'Blog where we share the person knowledge and experience.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://daklod2k3.github.io/love-tech-blog',
