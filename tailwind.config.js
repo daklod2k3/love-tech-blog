@@ -31,6 +31,7 @@ module.exports = {
           white: '#f5f5f5',
           dark: '#1d1e20',
         },
+        accent: 'var(--color-accent)',
       },
       typography: ({ theme }) => ({
         DEFAULT: {

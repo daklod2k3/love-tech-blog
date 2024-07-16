@@ -1,4 +1,13 @@
-::view-transition-old(root), ::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-accent: hsl(0, 0%, 100%);
+  }
+
+  .dark {
+    --color-accent: hsl(0, 0%, 0%);
+  }
 }

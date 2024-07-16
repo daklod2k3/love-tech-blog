@@ -9,11 +9,11 @@ import ThemeSwitch from './ThemeSwitch'
 
 const Header = () => {
   return (
-    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 flex items-center justify-between rounded-b px-3 py-3 backdrop-blur">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 flex items-center justify-between rounded-b px-3 py-3 backdrop-blur-sm">
       <div>
         <Link href="/" aria-label={siteMetadata.headerTitle}>
           <div className="flex items-center justify-between">
-            <div className="mr-3">
+            <div className="mr-3 h-14 max-sm:h-12">
               {/* <Logo /> */}
               <Image src={'/static/images/logo.png'} alt="page-logo" width={50} height={50} />
             </div>
