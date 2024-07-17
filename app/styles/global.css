@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --color-accent: hsl(0, 0%, 100%);
+    --color-accent: 0 0% 100%;
   }
 
   .dark {
-    --color-accent: hsl(0, 0%, 0%);
+    --color-accent: 240 3.7% 15.88%;
   }
 }

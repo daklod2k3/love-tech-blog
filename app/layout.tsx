@@ -10,7 +10,7 @@ import { Metadata } from 'next'
 import { Space_Grotesk } from 'next/font/google'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchConfig, SearchProvider } from 'pliny/search'
-import './global-style.css'
+import './styles/global.css'
 import { ThemeProviders } from './theme-providers'
 
 const space_grotesk = Space_Grotesk({

@@ -19,7 +19,7 @@ export default function PostItem({ post }: props) {
   })
 
   return (
-    <article className="bg-accent rounded p-5 shadow transition-all duration-300 hover:brightness-90">
+    <article className="rounded bg-accent p-5 shadow transition-all duration-300 hover:translate-x-3">
       <div className="space-y-2 xl:grid xl:items-baseline xl:space-y-0">
         <div className="space-y-3">
           <div className="space-y-2">
