@@ -103,7 +103,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="prose mt-5 max-w-none rounded bg-white p-7 pb-8 pt-10 shadow dark:prose-invert">
                 {children}
               </div>
-              <div className="pb-6 pt-6 text-sm text-gray-700 dark:text-gray-300">
+              {/* <div className="pb-6 pt-6 text-sm text-gray-700 dark:text-gray-300">
                 <Link href={discussUrl(path)} rel="nofollow">
                   Discuss on Twitter
                 </Link>
@@ -117,7 +117,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 >
                   <Comments slug={slug} />
                 </div>
-              )}
+              )} */}
             </div>
             <footer>
               <div className="divide-gray-200 text-sm font-medium leading-5 dark:divide-gray-700 xl:col-start-1 xl:row-start-2 xl:divide-y">
