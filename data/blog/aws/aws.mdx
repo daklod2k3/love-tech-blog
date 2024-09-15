@@ -1,0 +1,97 @@
+---
+title: 'AWS Ep 1 - Giới thiệu về AWS'
+date: '2024-08-09'
+tags: ['cloud', 'aws', 'first-cloud-journey']
+draft: false
+summary:
+---
+
+## AWS là gì?
+
+**AWS** là viết tắt của **Amazon Web Services**, là một trong những nhà cung cấp dịch vụ điện toán đám mây hàng đầu thế giới.
+
+Với AWS, **Điện toán đám mây (cloud computing)** là việc phân phối các tài nguyên CNTT theo nhu cầu qua Internet với thanh toán theo lượng sử dụng.
+
+**Điện toán đám mây giúp các tổ chức:**
+
+- Tiết kiệm chi phí nhờ khả năng tính phí dựa trên lượng sử dụng
+- Tăng tốc độ phát triển, nhờ tận dụng các tính năng tự động hoá và quản trị
+- Linh hoạt, thêm bớt tài nguyên theo nhu cầu
+- Mở rộng quy mô lên toàn cầu
+
+## AWS khác biệt gì với các dịch vụ khác?
+
+**AWS** là nhà cung cấp hạ tầng Cloud dẫn
+đầu trong **13 năm liên tiếp (Tính đến hết 2023)**
+
+**Lý do dẫn đầu?**
+
+- **Triết lý về giá của AWS**: khách hàng sẽ
+  càng ngày càng trả ít tiền hơn cho cùng
+  dịch vụ / tính năng / tài nguyên sử dụng. Từ lúc ra mắt đến nay, AWS đã giảm giá dịch vụ của mình hơn 120 lần. Ngoài ra sử dụng càng nhiều giá sẽ càng giảm.
+
+  ![AWS Pricing](/static/images/aws-price-circle.png)
+
+- AWS đưa việc mang lại **giá trị thực sự cho
+  khách hàng lên hàng đầu** trong tất cả các
+  nguyên tắc lãnh đạo
+  [(AWS Leadership Principles)](https://www.amazon.jobs/content/en/our-workplace/leadership-principles) của mình.
+  ![AWS Leadership Principles](/static/images/aws-leadership-principles.png)
+
+## Học cách sử dụng AWS rất dễ dàng
+
+- Là nhà cung cấp điện toán đám mây hàng đầu, số lượng khóa **học dành cho AWS** luôn nhiều nhất, có chiều sâu nhất trong tất cả các nhà cung cấp dịch vụ, kể cả các khóa học chính
+  hãng hay các khóa học của bên thứ ba.
+- Các bạn **hoàn toàn có thể tự học** để trở thành chuyên gia về nền tảng điện toán đám mây
+  AWS.
+- Hãy **kết bạn và cùng nhau học hỏi** trên các diễn đàn, nhóm học tập, hoặc các cộng đồng trên mạng xã hội.
+- Hãy **đăng ký tài khoản AWS** càng sớm càng tốt và trải nghiệm thông qua **Free Tier**.
+- Một số nhà cung cấp khóa học AWS thứ 3 uy tín :
+  - https://udemy.com/
+  - https://cloudguru.com/
+- Lộ trình học AWS :
+  - https://aws.amazon.com/vi/training/learning-paths/
+
+## Các khái niệm cơ bản
+
+`Data Center` - Trung tâm dữ liệu:
+
+- Một **Data Center** có thể chứa hàng
+  chục ngàn máy chủ.
+- Tất cả **Data Center** của AWS đều sử
+  dụng các thiết bị được tối ưu hóa dành
+  riêng cho hoạt động của AWS.
+
+`Availability Zone`(AZ):
+
+- **Availability Zone** **AZ** là một khu vực bao gồm một
+  hoặc nhiều **trung tâm dữ liệu**, các **AZ**
+  được thiết kế để không xảy ra sự cố ảnh
+  hưởng đồng thời 2 **AZ** một lúc (**fault
+  isolation**)
+- Giữa 2 **AZ** là đường kết nối riêng tốc độ cao.
+- **AWS khuyến nghị nên triển khai ứng dụng
+  tối thiều trên 2 AZ**. Việc này đảm bảo rằng hệ thống của chúng ta luôn luôn sẵn sàng và không bị ảnh hưởng bởi sự cố xảy ra ở một **AZ**.
+
+`Region`:
+
+- Một **AWS Region** bao gồm tối thiều 3
+  Availability Zone. Hiện tại có hơn 25 Region
+  trên toàn cầu.
+- Các **Region** được kết nối với nhau bởi mạng
+  backbone của AWS
+- Mặc định dữ liệu và dịch vụ ở các **Region**
+  độc lập với nhau. (Trừ một số dịch vụ ở quy
+  mô Global).
+- Chi phí dịch vụ ở mỗi **Region** có thể khác nhau. Do đó nếu hệ thống không yêu cầu về **độ trễ thấp** chúng ta có thể chọn **Region** có chi phí thấp nhất để tối ưu chi phí. Ngược lại nếu yêu cầu độ trễ cao chúng ta cần chọn **Region** gần với tập khách hàng của mình.
+
+`Edge Location`:
+
+- Là mạng lưới trung tâm dữ liệu AWS được
+  thiết kế để cung cấp dịch vụ với độ trễ thấp
+  nhất có thế
+- Các dịch vụ AWS hoạt động tại **Edge
+  Locations** (POP) bao gồm
+  - CloudFront ( CDN)
+  - Web Application Firewall ( WAF )
+  - Route 53 ( DNS Service )

@@ -1,0 +1,18 @@
+---
+title: 'AWS Ep 2 - Virtual Private Cloud (VPC)'
+date: '2024-08-10'
+tags: ['cloud', 'aws', 'first-cloud-journey']
+draft: false
+summary:
+---
+
+Khi triển khai ứng dụng trên cloud, chúng ta cần có 1 một phương thức để bảo mật dữ liệu và tài nguyên của mình. Trong AWS, có một dịch vụ gọi là Virtual Private Cloud (VPC) giúp chúng ta tạo ra một môi trường mạng ảo riêng tư trên cloud để làm công việc này
+
+## Amazon Virtual Private Cloud (VPC) là gì?
+
+Với Amazon Virtual Private Cloud (Amazon VPC), bạn có thể khởi chạy các tài nguyên AWS trong một mạng ảo được cô lập về mặt logic mà bạn đã định nghĩa. Mạng ảo này giống như một mạng truyền thống mà bạn sẽ vận hành trong trung tâm dữ liệu của riêng mình, với lợi ích của việc sử dụng cơ sở hạ tầng có khả năng mở rộng của AWS.
+
+Sơ đồ sau đây cho thấy một ví dụ về VPC. VPC có một subnet trong mỗi Vùng Sẵn sàng trong Khu vực, các phiên bản EC2 trong mỗi subnet, và một cổng internet để cho phép giao tiếp giữa các tài nguyên trong VPC của bạn và internet.
+![1](/static/images/aws/vpc1.png)
+
+## Security Group

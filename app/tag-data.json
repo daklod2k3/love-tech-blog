@@ -1,1 +1,11 @@
-{"cloud":1,"aws":1,"first-cloud-journey":1}
+{
+  "cloud": 2,
+  "aws": 2,
+  "nextjs": 1,
+  "api-gateway": 1,
+  "kong": 1,
+  "first-cloud-journey": 1,
+  "writings": 1,
+  "book": 1,
+  "reflection": 1
+}

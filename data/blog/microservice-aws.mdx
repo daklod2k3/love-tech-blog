@@ -1,0 +1,326 @@
+---
+title: 'Xây dựng hệ thống microservice và triển khai trên AWS'
+date: '2024-09-07'
+tags: ['cloud', 'aws', 'nextjs', 'api-gateway', 'kong']
+draft: false
+summary:
+---
+
+_Đây là dự án cá nhân mục đích học tập. Bài viết dưới đây là những kiến thức mình đã tự tìm hiểu thông qua quá trình hoàn thiện dự án nên sẽ không tránh được thiếu sót cũng như không tối ưu rất mong được sự góp ý và đóng góp của mọi người_
+
+## Yêu cầu hệ thống
+
+- Hệ thống gồm các `Server` nằm rải rác những vị trí khác nhau và cần 1 `giao diện người dùng` để tương tác đến các server.
+
+- Các `Server` cần phải được xác thực mới có thể tương tác
+
+Dễ thấy mô hình `Microservice` rất phù hợp với hệ thống này, do đó mình đã chọn nó để phát triển
+
+## Thiết kế
+
+- Giao diện người dùng: ở đây mình chọn `Web Application`. Vì sao lại là web? Nếu App không yêu cầu phần cứng hệ thống ở Client (mic, GPS, camera,...) hoặc phải chạy các tác vụ nặng thì tối ưu nhất là Web Application khi hầu hết các thiết bị thông minh đều có thể duyệt Web, điều đó tăng khả năng tương thích của Application.
+
+- `Authenticator`: mình sẽ xây dựng 1 Service riêng dùng để **Authenticate** các **Request** từ **Client** đến các **Service**.
+
+- `Api Gateway`: để có thể kết nối Web Application đến các Service cũng như Authenticator các kết nối đó, chúng ta cần 1 Service trung gian và đó là Api Gateway.
+
+![](/static/images/microservice-aws/service.png)
+
+### Công nghệ
+
+- [NextJS](https://nextjs.org/): sử dụng để xây dựng `Web Application`. NextJS là một Framework mã nguồn mở được xây dựng dựa trên React với khả năng Server-Side Rendering và tạo web tĩnh
+
+- [Supabase](https://supabase.com/): Supabase là một giải pháp thay thế cho `Firebase` với mã nguồn mở. Có các tính năng: Postgres Database, Authentication, ... Vì đã sử dụng nên mình rất thích Supabase từ đó mình muốn sử dụng `Supabase Auth`, một tính năng của Supabase, để xây dựng `Auth Provider` cho hệ thống
+
+- [Supabase Auth](https://github.com/supabase/auth): sử dụng để xây dựng `Auth Provider`. Supabase Auth là một phần mềm quản lý người dùng dựa trên **JWT** cũng như cấp phát **JWT** để quản lý. Với các tính năng như:
+
+  - Row Level Security với PostgREST
+  - Đăng nhập với email, password, magic link, phone number
+  - Đăng nhập với các nhà cung cấp bên ngoài (Google, Apple, Facebook, Discord, ...)
+
+- [Kong Gateway](https://konghq.com/products/kong-gateway): sử dụng để xây dựng Api Gateway. Kong Gateway là một Api Gateway mã nguồn mở được xây dựng từ NGINX. Nhẹ, mượt, linh hoạt là những khả năng mà Kong Gateway có. Thiết lập cấu hình sử dụng API, Web UI dễ dàng thao tác trực quan hoặc khai báo thông qua file configuration giúp chúng ta cực kì dễ dàng và nhanh chóng để triển khai ứng dụng
+
+### AWS
+
+![](/static/images/microservice-aws/service-on-aws.png)
+
+- `Amplify`: sử dụng để triển khai NextJS
+- `EC2`: sử dụng để triển khai Kong Gateway và Auth Provider
+- `RDS`: sử dụng để triển khai Postgres DB cho Auth Provider
+
+  **_Lưu ý: để có tốc độ tốt nhất chúng ta nên đặt các máy chủ `EC2` cũng như `RDS` chung VPC và giao tiếp thông qua IP Private_**
+
+## Thiết lập
+
+- ### Kong:
+
+  ```:kong.yml
+  _format_version: "3.0"
+  _transform: true
+
+  services:
+    - connect_timeout: 60000
+      enabled: true
+      # Private IP của EC2 Auth Provider
+      host: 172.31.31.249
+      name: auth-service
+      path: /
+      port: 9999
+      protocol: http
+      read_timeout: 60000
+      retries: 5
+      routes:
+        - https_redirect_status_code: 426
+          id: 5277ec3e-b682-4f4e-bc56-99791f1ac067
+          path_handling: v0
+          paths:
+            - /api/auth
+          preserve_host: false
+          protocols:
+            - http
+            - https
+          regex_priority: 0
+          request_buffering: true
+          response_buffering: true
+          strip_path: true
+      write_timeout: 60000
+    - connect_timeout: 60000
+      enabled: true
+      #Private IP của Service
+      host: 192.168.192.1
+      name: Service 1
+      path: /
+      plugins:
+        - config:
+            public_paths: []
+            #API xác thực người dùng của Auth Provider
+            url: http://172.31.31.249:9999/auth/user
+          enabled: true
+          name: custom-auth
+          protocols:
+            - grpc
+            - grpcs
+            - http
+            - https
+      port: 5000
+      protocol: http
+      read_timeout: 60000
+      retries: 5
+      routes:
+        - https_redirect_status_code: 426
+          id: 4eda8873-a93c-4739-9d73-f6c02764a5dc
+          path_handling: v0
+          paths:
+            - /api/jetson
+          preserve_host: false
+          protocols:
+            - http
+            - https
+          regex_priority: 0
+          request_buffering: true
+          response_buffering: true
+          strip_path: true
+      write_timeout: 60000
+    - connect_timeout: 60000
+      enabled: false
+      #Địa chỉ Web App trên Amplify
+      host: main.<id>.amplifyapp.com
+      name: Web
+      path: /
+      port: 80
+      protocol: http
+      read_timeout: 60000
+      retries: 5
+      routes:
+        - https_redirect_status_code: 426
+          id: 764a6b8a-83a6-496f-882a-a097af79e839
+          path_handling: v0
+          paths:
+            - /
+          preserve_host: true
+          protocols:
+            - http
+            - https
+          regex_priority: 0
+          request_buffering: true
+          response_buffering: true
+          strip_path: true
+      write_timeout: 60000
+  ```
+
+`Best practice`: Các bạn có thể chạy Kong Gateway và thao tác trên giao diện để dễ thiết lập hơn, sau đó dùng [decK](https://docs.konghq.com/deck/latest/) xuất thiếp lập thành dưới dạng json để lưu vào `kong.yml` và chạy Kong Gateway ở chế độ db-less để tránh lãng phí database không cần thiết, khi thiết lập của Api Gateway là một thứ nên ít được thay đổi nhất, ở chế độ mặc định.
+
+- ### Supabase Auth:
+
+  ```:.env
+  GOTRUE_SITE_URL="http://localhost:3000"
+  GOTRUE_JWT_SECRET=<secret>
+  GOTRUE_DB_MIGRATIONS_PATH=/go/src/github.com/supabase/auth/migrations
+  GOTRUE_DB_DRIVER=postgres
+  DATABASE_URL=postgres://supabase_auth_admin:<password>@<rds_endpoint>/postgres
+  GOTRUE_API_HOST=0.0.0.0
+  API_EXTERNAL_URL="http://localhost:9999"
+  PORT=9999
+
+  #Thiết lập tự động xác nhận email khi đăng ký tài khoản
+  GOTRUE_MAILER_AUTOCONFIRM="true"
+  ```
+
+## Api Endpoint
+
+### Auth
+
+- `/api/auth/health`: Kiểm tra Supabase Auth có hoạt động hay không
+
+  ```json
+  return:
+  {
+    "version": "v2.160.0",
+    "name": "GoTrue",
+    "description": "GoTrue is a user registration and authentication API"
+  }
+  ```
+
+- `/api/auth/signup`: Đăng ký tài khoản
+
+  ```json
+  body:
+  {
+    "email": "email@example.com",
+    "password": "secret"
+  }
+  ```
+
+  <details>
+<summary>Click to show response</summary>
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MTYxNDM0Ny03Mjc5LTQ1MjAtYjExNy1lZjAwOTg5NjA3MGQiLCJhdWQiOiIiLCJleHAiOjE3MjYzOTgwNTEsImlhdCI6MTcyNjM5NDQ1MSwiZW1haWwiOiJ0ZXN0QGMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InRlc3RAYy5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiNTE2MTQzNDctNzI3OS00NTIwLWIxMTctZWYwMDk4OTYwNzBkIn0sInJvbGUiOiIiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTcyNjM5NDQ1MX1dLCJzZXNzaW9uX2lkIjoiNTk4NDk1MjAtYzdlNy00Y2QzLWFhYWEtZDFmOWJhM2Y1MzdhIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.KYJJT2GRnoX7g_ma_Ny3CGv2XFCH_ojfui7ZrEsClyI",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "expires_at": 1726398051,
+  "refresh_token": "_9V7_y0cYQg9glVwlzHvgQ",
+  "user": {
+    "id": "51614347-7279-4520-b117-ef009896070d",
+    "aud": "",
+    "role": "",
+    "email": "email@example.com",
+    "email_confirmed_at": "2024-09-15T10:00:51.484146258Z",
+    "phone": "",
+    "last_sign_in_at": "2024-09-15T10:00:51.490742489Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": ["email"]
+    },
+    "user_metadata": {
+      "email": "email@example.com",
+      "email_verified": false,
+      "phone_verified": false,
+      "sub": "51614347-7279-4520-b117-ef009896070d"
+    },
+    "identities": [
+      {
+        "identity_id": "9d35573e-0252-4119-92b0-ab2c10614ee9",
+        "id": "51614347-7279-4520-b117-ef009896070d",
+        "user_id": "51614347-7279-4520-b117-ef009896070d",
+        "identity_data": {
+          "email": "email@example.com",
+          "email_verified": false,
+          "phone_verified": false,
+          "sub": "51614347-7279-4520-b117-ef009896070d"
+        },
+        "provider": "email",
+        "last_sign_in_at": "2024-09-15T10:00:51.474762066Z",
+        "created_at": "2024-09-15T10:00:51.474815Z",
+        "updated_at": "2024-09-15T10:00:51.474815Z",
+        "email": "email@example.com"
+      }
+    ],
+    "created_at": "2024-09-15T10:00:51.456709Z",
+    "updated_at": "2024-09-15T10:00:51.49665Z",
+    "is_anonymous": false
+  }
+}
+```
+</details>
+
+- `/api/auth/token`: Đăng nhập
+
+  ```json
+  body:
+  {
+    "email": "email@example.com",
+    "password": "secret"
+  }
+  ```
+
+    <details>
+  <summary>Click to show response</summary>
+  ```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MTYxNDM0Ny03Mjc5LTQ1MjAtYjExNy1lZjAwOTg5NjA3MGQiLCJhdWQiOiIiLCJleHAiOjE3MjYzOTgxNTEsImlhdCI6MTcyNjM5NDU1MSwiZW1haWwiOiJ0ZXN0QGMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InRlc3RAYy5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiNTE2MTQzNDctNzI3OS00NTIwLWIxMTctZWYwMDk4OTYwNzBkIn0sInJvbGUiOiIiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTcyNjM5NDU1MX1dLCJzZXNzaW9uX2lkIjoiY2YzOWJjZjEtMDU5MS00YjhkLWFiYWYtYTZlMzk1MTNlMGJjIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.UBaUhLhl5D00bii-PuoPtuBvNQRzA7zLXft1ZUuKWR0",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "expires_at": 1726398151,
+    "refresh_token": "tK-iIz34KNSAM5CFEEFKcg",
+    "user": {
+      "id": "51614347-7279-4520-b117-ef009896070d",
+      "aud": "",
+      "role": "",
+      "email": "email@example.com",
+      "email_confirmed_at": "2024-09-15T10:00:51.484146Z",
+      "phone": "",
+      "confirmed_at": "2024-09-15T10:00:51.484146Z",
+      "last_sign_in_at": "2024-09-15T10:02:31.508763272Z",
+      "app_metadata": {
+        "provider": "email",
+        "providers": ["email"]
+      },
+      "user_metadata": {
+        "email": "email@example.com",
+        "email_verified": false,
+        "phone_verified": false,
+        "sub": "51614347-7279-4520-b117-ef009896070d"
+      },
+      "identities": [
+        {
+          "identity_id": "9d35573e-0252-4119-92b0-ab2c10614ee9",
+          "id": "51614347-7279-4520-b117-ef009896070d",
+          "user_id": "51614347-7279-4520-b117-ef009896070d",
+          "identity_data": {
+            "email": "email@example.com",
+            "email_verified": false,
+            "phone_verified": false,
+            "sub": "51614347-7279-4520-b117-ef009896070d"
+          },
+          "provider": "email",
+          "last_sign_in_at": "2024-09-15T10:00:51.474762Z",
+          "created_at": "2024-09-15T10:00:51.474815Z",
+          "updated_at": "2024-09-15T10:00:51.474815Z",
+          "email": "email@example.com"
+        }
+      ],
+      "created_at": "2024-09-15T10:00:51.456709Z",
+      "updated_at": "2024-09-15T10:02:31.513208Z",
+      "is_anonymous": false
+    }
+  }
+  ```
+  </details>
+
+- Và còn các route quản lý khác các bạn có thể xem thêm trong Supabase Auth source
+
+### Service
+
+- `/api/jetson`: đây là route để gọi đến các Service bắt buộc phải có header chứa JWT
+  ```json
+  headers:
+  {
+    "Authorization": "Bearer eyJhbGciOiJI...M3A90LCkxxtX9oNP9KZO" // required
+    ...
+  }
+  ```
+
+### Web Application
+
+- Còn lại các route không thuộc `/api` sẽ được forward đến NextJS Application
